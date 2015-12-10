@@ -57,32 +57,30 @@ bool DtPrQueue::isQueueFull() {
 
 void DtPrQueue::enque(Packet* p) {
 	hdr_ip* iph = hdr_ip::access(p);
+	int p_fid = iph->flowid();
+	p_fid = (p_fid > 999) ? p_fid / 1000 : p_fid;
 	/// 队满，则drop
 	/// 否则，加入到相对应的队列中
 	if (isQueueFull()) {
-		drop(p);
-	} else {
-		int p_fid = iph->flowid();
-		p_fid = (p_fid > 999) ? p_fid / 1000 : p_fid;
-		if (qNum > 0) {
-			if (p_fid <= qNum && p_fid > 0) {
-				if (maxPriority != p_fid) {
-					//printf("######---%d:%d\n", p_fid, qlim_ / 2);
-					int i, total = 0;
-					for (i = 1; i <= qNum; ++i) {
-						if (i != maxPriority) {
-							total += qList[i].length();
-						}
-					}
-					if (qList[maxPriority].length() > 0
-							&& total >= qlim_ * 0.5) {
-						//printf("######---%d:%d\n", p_fid, qlim_ / 2);
-						drop(p);
-						return;
+		if (p_fid == maxPriority) {
+			if (qNum > 0 && (qList[maxPriority].length() + 1) < qlim_) {
+				int i;
+				for (i = qNum; i >= 0; --i) {
+					if (qList[i].length() > 0 && i != maxPriority) {
+						Packet * toRemove = qList[i].tail();
+						qList[i].remove(toRemove);
+						break;
 					}
 				}
+				qList[maxPriority].enque(p);
+			} else {
+				drop(p);
+			}
+		}
+	} else {
+		if (qNum > 0) {
+			if (p_fid <= qNum && p_fid > 0) {
 				qList[p_fid].enque(p);
-
 			} else {
 				printf("$$$$$$$---%d\n", p_fid);
 				qList[0].enque(p);
@@ -96,14 +94,14 @@ void DtPrQueue::enque(Packet* p) {
 Packet* DtPrQueue::deque() {
 	Packet *p;
 	int i = 0;
-	//printf("%d\n", qNum);
+//printf("%d\n", qNum);
 	for (i = 1; i <= qNum; ++i) {
 		p = qList[i].deque();
 		if (0 != p)
 			return p;
 	}
 	p = qList[0].deque();
-	//printf("%d\n", i);
+//printf("%d\n", i);
 	return p;
 }
 
