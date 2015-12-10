@@ -60,7 +60,7 @@ void DtPrQueue::enque(Packet* p) {
 	int p_fid = iph->flowid();
 	p_fid = (p_fid > 999) ? p_fid / 1000 : p_fid;
 	/// 队满，如果不是最高优先级的包，丢弃
-	/// 否则，将有包的最低优先级的队尾包丢弃，将 p 加入到最高优先级队列中
+	/// 否则，将有包的最低优先级的队头包丢弃，将 p 加入到最高优先级队列中
 	if (isQueueFull()) {
 		if (p_fid != maxPriority) {
 			drop(p);
@@ -69,8 +69,7 @@ void DtPrQueue::enque(Packet* p) {
 				int i;
 				for (i = qNum; i >= 0; --i) {
 					if (qList[i].length() > 0 && i != maxPriority) {
-						Packet * toRemove = qList[i].tail();
-						qList[i].remove(toRemove);
+						Packet * toRemove = qList[i].deque();
 						drop(toRemove);
 						break;
 					}
