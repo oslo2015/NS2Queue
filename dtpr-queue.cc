@@ -71,6 +71,7 @@ void DtPrQueue::enque(Packet* p) {
 					if (qList[i].length() > 0 && i != maxPriority) {
 						Packet * toRemove = qList[i].tail();
 						qList[i].remove(toRemove);
+						drop(toRemove);
 						break;
 					}
 				}
@@ -96,14 +97,12 @@ void DtPrQueue::enque(Packet* p) {
 Packet* DtPrQueue::deque() {
 	Packet *p;
 	int i = 0;
-//printf("%d\n", qNum);
 	for (i = 1; i <= qNum; ++i) {
 		p = qList[i].deque();
 		if (0 != p)
 			return p;
 	}
 	p = qList[0].deque();
-//printf("%d\n", i);
 	return p;
 }
 
