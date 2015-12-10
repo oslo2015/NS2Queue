@@ -59,30 +59,14 @@ void DtPrQueue::enque(Packet* p) {
 	hdr_ip* iph = hdr_ip::access(p);
 	/// 队满，则drop
 	/// 否则，加入到相对应的队列中
-	if (isQueueFull()) {
+	if (0) {
 		drop(p);
 	} else {
 		int p_fid = iph->flowid();
 		p_fid = (p_fid > 999) ? p_fid / 1000 : p_fid;
 		if (qNum > 0) {
 			if (p_fid <= qNum && p_fid > 0) {
-				if (maxPriority != p_fid) {
-					//printf("######---%d:%d\n", p_fid, qlim_ / 2);
-					int i, total = 0;
-					for (i = 1; i <= qNum; ++i) {
-						if (i != maxPriority) {
-							total += qList[i].length();
-						}
-					}
-					if (qList[maxPriority].length() > 0
-							&& total >= qlim_ * 0.5) {
-						//printf("######---%d:%d\n", p_fid, qlim_ / 2);
-						drop(p);
-						return;
-					}
-				}
 				qList[p_fid].enque(p);
-
 			} else {
 				printf("$$$$$$$---%d\n", p_fid);
 				qList[0].enque(p);
