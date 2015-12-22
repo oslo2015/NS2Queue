@@ -63,11 +63,15 @@ void DtPrQueue::enque(Packet* p) {
 	/// 否则，将有包的最低优先级的队尾包丢弃，将 p 加入到最高优先级队列中
 	if (isQueueFull()) {
 		int i, maxPri;
-		for (i = 1; i <= qNum; ++i) {
-			if (qList[i].length() > 0) {
-				maxPri = i;
-				break;
+		if (qNum > 0) {
+			for (i = 1; i <= qNum; ++i) {
+				if (qList[i].length() > 0) {
+					maxPri = i;
+					break;
+				}
 			}
+		} else {
+			maxPri = 0;
 		}
 		if (p_fid != maxPri) {
 			drop(p);
