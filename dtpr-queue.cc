@@ -59,26 +59,26 @@ void DtPrQueue::enque(Packet* p) {
 	hdr_ip* iph = hdr_ip::access(p);
 	int p_fid = iph->flowid();
 	p_fid = (p_fid > 999) ? p_fid / 1000 : p_fid;
-	/// 队满，如果不是最高优先级的包，丢弃
-	/// 否则，将有包的最低优先级的队尾包丢弃，将 p 加入到最高优先级队列中
+	/// 队满
+	/// 如果qNum=0，丢弃
+	/// 否则，如果有比该包低优先级的队列，则把其中最低的队列的队尾包丢弃，将该包加入到相应队列
+	/// 否则，丢弃
 	if (isQueueFull()) {
-		if (p_fid != maxPriority) {
-			drop(p);
-		} else {
-			if (qNum > 0 && (qList[maxPriority].length() + 1) < qlim_) {
-				int i;
-				for (i = qNum; i >= 0; --i) {
-					if (qList[i].length() > 0 && i != maxPriority) {
-						Packet * toRemove = qList[i].tail();
-						qList[i].remove(toRemove);
-						drop(toRemove);
-						break;
-					}
+		if (qNum > 0) {
+			int i;
+			for (i = qNum; i > p_fid; --i) {
+				if (qList[i].length() > 0) {
+					Packet * toRemove = qList[i].tail();
+					qList[i].remove(toRemove);
+					drop(toRemove);
+					qList[p_fid].enque(p);
+					break;
 				}
-				qList[maxPriority].enque(p);
-			} else {
-				drop(p);
 			}
+			if (i <= p_fid)
+				drop(p);
+		} else {
+			drop(p);
 		}
 	} else {
 		if (qNum > 0) {
