@@ -10,6 +10,15 @@
 #include "queue.h"
 #include "address.h"
 
+#include <iostream>
+#include <list>
+#include <algorithm>
+
+using namespace std;
+
+typedef list<int> INTLIST;
+bool findInList(INTLIST l, int key);
+
 class DtPrQueue: public Queue {
 public:
 	DtPrQueue();
@@ -29,6 +38,21 @@ protected:
 	int qNum;
 	// add
 	int maxPriority;
+
+	// 20160311
+	INTLIST *fidRecord;
+	bool delayCheck;
+
+	int getDelayCheck();
+	void enableDelayCheck();
+
+	bool isFidPrior(int jobId);
+	void addFidPrior(int jobId);
+	void removeFidPrior(int jobId);
+
+private:
+	int defaultPrior;    // 用来设置默认优先级。用于scheduleDelay情景下，没有对应优先级时设置的默认优先级。
+
 };
 
 #endif // MYQ_H_INCLUDED
