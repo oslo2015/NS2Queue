@@ -226,6 +226,7 @@ void DtPrQueue::addFidPrior(int jobId) {
 		return;
 	if (NULL != fidRecord && !findInList(*fidRecord, jobId)) {
 		fidRecord->push_back(jobId);
+		fidRecord->sort();
 
 		// 将默认队列中，jobId的包移动到相应队列中， 注意顺序。
 		if (qNum > 0) {
