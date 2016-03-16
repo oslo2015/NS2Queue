@@ -44,9 +44,9 @@ void DtPrQueue::setQNum(int num) {
 	}
 
 	defaultPrior = 0;
-//	if (qNum > 0) {
-//		defaultPrior = (qNum >> 1) + 1;
-//	}
+	if (qNum > 0) {
+		defaultPrior = (qNum >> 1) + 1;
+	}
 }
 
 void DtPrQueue::setMaxPriority(int num) {
