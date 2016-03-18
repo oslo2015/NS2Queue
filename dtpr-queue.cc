@@ -45,7 +45,8 @@ void DtPrQueue::setQNum(int num) {
 
 	defaultPrior = 0;
 	if (qNum > 0) {
-		defaultPrior = (qNum >> 1) + 1;
+//		defaultPrior = (qNum >> 1) + 1;
+		defaultPrior = 1;
 	}
 }
 
