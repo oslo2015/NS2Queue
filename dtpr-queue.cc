@@ -170,6 +170,11 @@ int DtPrQueue::command(int argc, const char* const * argv) {
 			enableDelayCheck();
 			return (TCL_OK);
 		}
+
+		if (strcmp(argv[1], "clearQueue") == 0) {
+			clearQueue();
+			return (TCL_OK);
+		}
 	}
 	if (argc == 3) {
 		if (strcmp(argv[1], "queue-num") == 0) {
@@ -265,3 +270,14 @@ void DtPrQueue::removeFidPrior(int jobId) {
 	}
 }
 
+// 清空该队列
+void DtPrQueue::clearQueue() {
+	int i;
+	for (i = 0; i <= qNum; ++i) {
+		PacketQueue * tmpQueue = &qList[i];
+		Packet * tmpPkt = NULL;
+		while (NULL != (tmpQueue = tmpQueue->deque())) {
+			drop(tmpPkt);
+		}
+	}
+}

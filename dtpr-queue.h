@@ -50,6 +50,8 @@ protected:
 	void addFidPrior(int jobId);
 	void removeFidPrior(int jobId);
 
+	void clearQueue();
+
 private:
 	int defaultPrior;    // 用来设置默认优先级。用于scheduleDelay情景下，没有对应优先级时设置的默认优先级。
 
