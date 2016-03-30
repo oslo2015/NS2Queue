@@ -276,7 +276,7 @@ void DtPrQueue::clearQueue() {
 	for (i = 0; i <= qNum; ++i) {
 		PacketQueue * tmpQueue = &qList[i];
 		Packet * tmpPkt = NULL;
-		while (NULL != (tmpQueue = tmpQueue->deque())) {
+		while (NULL != (tmpPkt = tmpQueue->deque())) {
 			drop(tmpPkt);
 		}
 	}
